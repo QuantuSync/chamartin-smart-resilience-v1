@@ -40,7 +40,6 @@ interface APIStatusIndicatorProps {
 export default function APIStatusIndicator({ dataSource, confidence, metadata }: APIStatusIndicatorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [apiStatuses, setApiStatuses] = useState<APIStatus[]>([]);
-  const [totalRequests, setTotalRequests] = useState(0);
   const [systemUptime, setSystemUptime] = useState(99.7);
 
   // Function to map API status to our format
@@ -171,12 +170,6 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
     const combinedUptime = (uptimeFromAPIs * 0.6) + (uptimeFromConfidence * 0.4);
     
     setSystemUptime(Math.max(85, Math.min(99.9, combinedUptime)));
-    
-    // Calculate total requests based on active APIs
-    setTotalRequests(prev => {
-      const baseRequests = activeAPIs * 150;
-      return Math.max(baseRequests, prev);
-    });
 
   }, [metadata, confidence]);
 
@@ -278,10 +271,6 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
             <div className="flex items-center gap-1">
               <Wifi className="w-4 h-4" />
               <span>Uptime: {systemUptime.toFixed(1)}%</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Database className="w-4 h-4" />
-              <span>{totalRequests.toLocaleString()} calls</span>
             </div>
           </div>
           <div className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
