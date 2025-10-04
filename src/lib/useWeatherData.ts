@@ -50,8 +50,8 @@ interface HistoricalAnalysis {
   combinedConfidence: number;
 }
 
-const UPDATE_INTERVAL = 1200000; // 20 minutos en milisegundos
-const MIN_MANUAL_UPDATE_INTERVAL = 300000; // 5 minutos mínimo entre updates manuales
+const UPDATE_INTERVAL = 1200000; // 20 minutes in milliseconds
+const MIN_MANUAL_UPDATE_INTERVAL = 300000; // 5 minutes minimum between manual updates
 
 export function useWeatherData() {
   const [weatherData, setWeatherData] = useState<EnhancedWeatherData | null>(null);
@@ -70,7 +70,7 @@ export function useWeatherData() {
   const calculateRiskScore = useCallback((weather: WeatherData, platform: Platform, era5Factor: number = 1.0): number => {
     let score = 0;
     
-    // Factor precipitación (30%) - Calibrado con eventos históricos + ERA5
+    // Precipitation factor (30%) - Calibrated with historical events + ERA5
     let precipitationFactor = 0;
     if (weather.precipitation > 5) {
       precipitationFactor = Math.min(100, 50 + (weather.precipitation - 5) * 10);
@@ -79,7 +79,7 @@ export function useWeatherData() {
     }
     score += precipitationFactor * 0.30;
     
-    // Factor viento (25%) - Escalado exponencial para rachas extremas
+    // Wind factor (25%) - Exponential scaling for extreme gusts
     let windFactor = 0;
     if (weather.windSpeed > 14) {
       windFactor = Math.min(100, 70 + (weather.windSpeed - 14) * 3);
@@ -88,15 +88,15 @@ export function useWeatherData() {
     }
     score += windFactor * 0.25;
     
-    // Factor exposición específica por andén (15%)
+    // Platform-specific exposure factor (15%)
     const exposureFactor = platform.isRoofed ? 0 : platform.exposure * 100;
     score += exposureFactor * 0.15;
     
-    // Factor humedad (10%) - Visibilidad y condensación
+    // Humidity factor (10%) - Visibility and condensation
     const humidityFactor = weather.humidity > 85 ? 60 : 0;
     score += humidityFactor * 0.10;
     
-    // Factor temperatura (10%) - Riesgo operativo en extremos
+    // Temperature factor (10%) - Operational risk at extremes
     let tempFactor = 0;
     if (weather.temperature > 35) {
       tempFactor = 40 + (weather.temperature - 35) * 5;
@@ -105,18 +105,18 @@ export function useWeatherData() {
     }
     score += tempFactor * 0.10;
     
-    // Factor presión (10%) - Indicador de estabilidad atmosférica
+    // Pressure factor (10%) - Atmospheric stability indicator
     const pressureFactor = weather.pressure < 1000 ? 40 : 0;
     score += pressureFactor * 0.10;
     
-    // Aplicar factor de anomalía ERA5
+    // Apply ERA5 anomaly factor
     const adjustedScore = score * era5Factor;
     
     return Math.min(Math.round(adjustedScore), 100);
   }, []);
 
   const updatePlatformScores = useCallback((weather: WeatherData, era5AnomalyLevel?: string) => {
-    // Obtener factor de riesgo basado en nivel de anomalía ERA5
+    // Get risk factor based on ERA5 anomaly level
     const era5Factor = era5AnomalyLevel ? era5AnomalyToRiskFactor(era5AnomalyLevel) : 1.0;
     
     const updatedPlatforms = initialPlatforms.map(platform => ({
@@ -129,7 +129,7 @@ export function useWeatherData() {
   const updateHistoricalAnalysis = useCallback((weather: WeatherData, averageRiskScore: number, metadata?: WeatherMetadata) => {
     if (!weather) return;
 
-    // Preparar contexto ERA5 si está disponible
+    // Prepare ERA5 context if available
     const era5Context = metadata?.historicalContext ? {
       historicalAvg: metadata.historicalContext,
       anomaly: {
@@ -141,7 +141,7 @@ export function useWeatherData() {
       }
     } : undefined;
 
-    // Generar análisis histórico mejorado
+    // Generate enhanced historical analysis
     const analysis = generateHistoricalRecommendations(
       {
         precipitation: weather.precipitation,
@@ -154,7 +154,7 @@ export function useWeatherData() {
       era5Context
     );
 
-    // Análisis de tendencias
+    // Trend analysis
     const trendAnalysis = analyzeTrends({
       precipitation: weather.precipitation,
       windSpeed: weather.windSpeed,
@@ -162,7 +162,7 @@ export function useWeatherData() {
       pressure: weather.pressure
     }, era5Context);
 
-    // Calcular confianza combinada
+    // Calculate combined confidence
     const combinedConfidence = getCombinedConfidence(analysis.confidence, metadata?.era5Validation);
 
     setHistoricalAnalysis({
@@ -182,7 +182,7 @@ export function useWeatherData() {
   const updateWeatherData = useCallback(async (isManual: boolean = false) => {
     if (isSimulating) return;
     
-    // Verificar si es un update manual y si está permitido
+    // Check if it's a manual update and if it's allowed
     if (isManual && !canMakeManualUpdate()) {
       const timeLeft = Math.ceil((MIN_MANUAL_UPDATE_INTERVAL - (Date.now() - (lastManualUpdate?.getTime() || 0))) / 1000);
       console.log(`[useWeatherData] Manual update blocked. Try again in ${timeLeft} seconds.`);
@@ -198,7 +198,7 @@ export function useWeatherData() {
       if (response.ok) {
         const data = await response.json();
         
-        // Procesar datos mejorados del API
+        // Process enhanced API data
         const enhancedWeatherData: EnhancedWeatherData = {
           timestamp: data.timestamp,
           temperature: data.temperature,
@@ -212,33 +212,33 @@ export function useWeatherData() {
           dataQuality: data.dataQuality
         };
 
-        // Procesar metadata
+        // Process metadata
         const weatherMetadata: WeatherMetadata = data.metadata;
         
         setWeatherData(enhancedWeatherData);
         setMetadata(weatherMetadata);
         setConfidence(data.confidence || 50);
-        setDataSource(data.sources?.join(' + ') || 'APIs en vivo');
+        setDataSource(data.sources?.join(' + ') || 'Live APIs');
         setAnomalyLevel(weatherMetadata.anomalyLevel || 'normal');
         
-        // Actualizar scores de plataformas con factor ERA5
+        // Update platform scores with ERA5 factor
         updatePlatformScores(enhancedWeatherData, weatherMetadata.anomalyLevel);
         
-        // Calcular score promedio para análisis histórico
+        // Calculate average score for historical analysis
         const averageRiskScore = platforms.reduce((sum, p) => sum + p.riskScore, 0) / platforms.length;
         
-        // Actualizar análisis histórico con contexto ERA5
+        // Update historical analysis with ERA5 context
         updateHistoricalAnalysis(enhancedWeatherData, averageRiskScore, weatherMetadata);
         
         const now = new Date();
         setLastUpdate(now);
         
-        // Actualizar timestamp de manual si corresponde
+        // Update manual timestamp if applicable
         if (isManual) {
           setLastManualUpdate(now);
         }
         
-        // Guardar datos originales si es la primera vez
+        // Save original data if first time
         if (!originalWeatherData) {
           setOriginalWeatherData(enhancedWeatherData);
         }
@@ -257,10 +257,10 @@ export function useWeatherData() {
     } catch (error) {
       console.error('[useWeatherData] Error updating weather data:', error);
       
-      // Mantener funcionamiento con datos anteriores si están disponibles
+      // Keep functioning with previous data if available
       if (!weatherData) {
-        // Solo usar fallback si no hay datos previos
-        setDataSource('Fallback local');
+        // Only use fallback if no previous data
+        setDataSource('Local fallback');
         setConfidence(30);
       }
     } finally {
@@ -269,7 +269,7 @@ export function useWeatherData() {
   }, [isSimulating, originalWeatherData, updatePlatformScores, updateHistoricalAnalysis, platforms, weatherData, canMakeManualUpdate, lastManualUpdate]);
 
   const refreshData = useCallback(() => {
-    updateWeatherData(true); // Marcar como manual
+    updateWeatherData(true); // Mark as manual
   }, [updateWeatherData]);
 
   const simulateWeather = useCallback((simulatedData: WeatherData) => {
@@ -277,20 +277,20 @@ export function useWeatherData() {
     
     const enhancedSimulatedData: EnhancedWeatherData = {
       ...simulatedData,
-      sources: ['Simulación DANA'],
+      sources: ['DANA Simulation'],
       confidence: 95,
       dataQuality: 'simulated'
     };
     
     setWeatherData(enhancedSimulatedData);
-    setDataSource('Simulación DANA');
+    setDataSource('DANA Simulation');
     setConfidence(95);
-    setAnomalyLevel('extreme'); // Las simulaciones suelen ser condiciones extremas
+    setAnomalyLevel('extreme'); // Simulations are usually extreme conditions
     
-    // Actualizar scores con factor de extremo
+    // Update scores with extreme factor
     updatePlatformScores(simulatedData, 'extreme');
     
-    // Calcular análisis histórico para simulación
+    // Calculate historical analysis for simulation
     const averageRiskScore = platforms.reduce((sum, p) => sum + p.riskScore, 0) / platforms.length;
     updateHistoricalAnalysis(simulatedData, averageRiskScore);
     
@@ -303,7 +303,7 @@ export function useWeatherData() {
     
     if (originalWeatherData) {
       setWeatherData(originalWeatherData);
-      setDataSource(originalWeatherData.sources?.join(' + ') || 'APIs en vivo');
+      setDataSource(originalWeatherData.sources?.join(' + ') || 'Live APIs');
       setConfidence(originalWeatherData.confidence || 50);
       updatePlatformScores(originalWeatherData);
       
@@ -316,42 +316,42 @@ export function useWeatherData() {
     }
   }, [originalWeatherData, updatePlatformScores, updateHistoricalAnalysis, platforms, metadata, updateWeatherData]);
 
-  // Función para obtener estado del sistema
+  // Function to get system status
   const getSystemStatus = useCallback(() => {
     if (!weatherData || !metadata) {
       return {
         status: 'loading',
-        description: 'Cargando datos meteorológicos...'
+        description: 'Loading weather data...'
       };
     }
 
-    const era5Status = metadata.era5Validation?.dataSource || 'No disponible';
+    const era5Status = metadata.era5Validation?.dataSource || 'Not available';
     const sourcesCount = weatherData.sources?.length || 0;
     
     if (confidence >= 80 && sourcesCount >= 2) {
       return {
         status: 'optimal',
-        description: `Sistema funcionando óptimamente con ${sourcesCount} fuentes + ERA5`
+        description: `System operating optimally with ${sourcesCount} sources + ERA5`
       };
     } else if (confidence >= 60 && sourcesCount >= 1) {
       return {
         status: 'good',
-        description: `Funcionamiento normal con ${sourcesCount} fuente(s) + ERA5`
+        description: `Normal operation with ${sourcesCount} source(s) + ERA5`
       };
     } else if (sourcesCount >= 1) {
       return {
         status: 'degraded',
-        description: `Funcionamiento limitado - Verificar APIs`
+        description: `Limited operation - Check APIs`
       };
     } else {
       return {
         status: 'fallback',
-        description: `Modo fallback - APIs no disponibles`
+        description: `Fallback mode - APIs unavailable`
       };
     }
   }, [weatherData, metadata, confidence]);
 
-  // Función para obtener tiempo hasta próximo update automático
+  // Function to get time until next automatic update
   const getTimeToNextUpdate = useCallback((): number => {
     if (!lastUpdate) return 0;
     const timeSinceLastUpdate = Date.now() - lastUpdate.getTime();
@@ -359,7 +359,7 @@ export function useWeatherData() {
     return Math.max(0, timeToNext);
   }, [lastUpdate]);
 
-  // Función para obtener tiempo hasta próximo update manual permitido
+  // Function to get time until next allowed manual update
   const getTimeToNextManualUpdate = useCallback((): number => {
     if (!lastManualUpdate) return 0;
     const timeSinceLastManual = Date.now() - lastManualUpdate.getTime();
@@ -367,21 +367,21 @@ export function useWeatherData() {
     return Math.max(0, timeToNext);
   }, [lastManualUpdate]);
 
-  // Efecto para actualización automática cada 20 minutos
+  // Effect for automatic update every 20 minutes
   useEffect(() => {
-    // Hacer la primera llamada
+    // Make first call
     updateWeatherData(false);
     
-    // Configurar intervalo de 20 minutos
+    // Set 20-minute interval
     const interval = setInterval(() => {
       updateWeatherData(false);
     }, UPDATE_INTERVAL);
     
     return () => clearInterval(interval);
-  }, []); // Array vacío para evitar dependencias circulares
+  }, []); // Empty array to avoid circular dependencies
 
   return {
-    // Datos principales
+    // Main data
     weatherData,
     platforms,
     loading,
@@ -390,27 +390,27 @@ export function useWeatherData() {
     confidence,
     isSimulating,
     
-    // Análisis histórico mejorado
+    // Enhanced historical analysis
     historicalAnalysis,
     anomalyLevel,
     metadata,
     
-    // Funciones
-    refreshData, // Ahora incluye limitación de rate
+    // Functions
+    refreshData, // Now includes rate limiting
     simulateWeather,
     resetSimulation,
     getSystemStatus,
     getTimeToNextUpdate,
     getTimeToNextManualUpdate,
     
-    // Estados derivados
+    // Derived states
     hasERA5Validation: !!metadata?.era5Validation,
     era5Confidence: metadata?.era5Validation?.confidence || 0,
     sourcesUsed: weatherData?.sources || [],
     isHighAnomaly: anomalyLevel === 'high' || anomalyLevel === 'extreme',
     canManualUpdate: canMakeManualUpdate(),
     
-    // Información de rate limiting
+    // Rate limiting information
     updateInterval: UPDATE_INTERVAL,
     minManualInterval: MIN_MANUAL_UPDATE_INTERVAL
   };

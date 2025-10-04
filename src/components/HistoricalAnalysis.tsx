@@ -39,15 +39,15 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
 
   const comparativeData: ComparisonData[] = [
     {
-      event: historicalEvents.find(e => e.name === "Borrasca Filomena")!,
+      event: historicalEvents.find(e => e.name === "Storm Filomena")!,
       withoutSystem: {
         passengersAffected: 15000,
         serviceCancellations: 48,
-        recoveryTime: "72 horas",
+        recoveryTime: "72 hours",
         economicImpact: "2.3M€"
       },
       withSystem: {
-        earlyWarning: "48 horas anticipación",
+        earlyWarning: "48 hours notice",
         passengersProtected: 12500,
         servicesMaintained: 35,
         preventedLosses: "1.8M€"
@@ -58,26 +58,26 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
       withoutSystem: {
         passengersAffected: 8500,
         serviceCancellations: 32,
-        recoveryTime: "24 horas",
+        recoveryTime: "24 hours",
         economicImpact: "1.1M€"
       },
       withSystem: {
-        earlyWarning: "6 horas anticipación",
+        earlyWarning: "6 hours notice",
         passengersProtected: 7200,
         servicesMaintained: 26,
         preventedLosses: "850k€"
       }
     },
     {
-      event: historicalEvents.find(e => e.name === "Ola de Calor Extremo")!,
+      event: historicalEvents.find(e => e.name === "Extreme Heat Wave")!,
       withoutSystem: {
         passengersAffected: 4200,
         serviceCancellations: 16,
-        recoveryTime: "12 horas",
+        recoveryTime: "12 hours",
         economicImpact: "420k€"
       },
       withSystem: {
-        earlyWarning: "24 horas anticipación",
+        earlyWarning: "24 hours notice",
         passengersProtected: 3800,
         servicesMaintained: 12,
         preventedLosses: "315k€"
@@ -117,10 +117,10 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
 
   const getWarningLabel = (level: string) => {
     switch (level) {
-      case 'warning': return 'Alerta Histórica';
-      case 'advisory': return 'Aviso Histórico';
-      case 'watch': return 'Vigilancia';
-      default: return 'Información';
+      case 'warning': return 'Historical Alert';
+      case 'advisory': return 'Historical Advisory';
+      case 'watch': return 'Watch';
+      default: return 'Information';
     }
   };
 
@@ -132,7 +132,7 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-2 mb-4">
             <History className="w-5 h-5 text-blue-500" />
-            <h2 className="text-xl font-semibold text-gray-800">Análisis Histórico (Copernicus ERA5)</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Historical Analysis (Copernicus ERA5)</h2>
           </div>
 
           <div className={`border rounded-lg p-4 mb-4 ${getWarningColor(analysis.warningLevel)}`}>
@@ -142,17 +142,17 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
                 {getWarningLabel(analysis.warningLevel)}
               </span>
               <span className="text-sm">
-                (Confianza: {analysis.confidence}%)
+                (Confidence: {analysis.confidence}%)
               </span>
             </div>
             <p className="text-sm mb-3">{analysis.historicalContext}</p>
             <div className="text-xs opacity-75">
-              Score de riesgo actual: {currentRiskScore}/100
+              Current risk score: {currentRiskScore}/100
             </div>
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-800 mb-3">Recomendaciones Históricas</h3>
+            <h3 className="font-semibold text-gray-800 mb-3">Historical Recommendations</h3>
             <div className="space-y-2">
               {analysis.recommendations.map((rec: string, index: number) => (
                 <div key={index} className="flex items-start gap-2">
@@ -165,7 +165,7 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
 
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              Las recomendaciones históricas complementan, no reemplazan, las decisiones operativas en tiempo real.
+              Historical recommendations complement, not replace, real-time operational decisions.
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="w-5 h-5 text-purple-500" />
-            <h2 className="text-xl font-semibold text-gray-800">Eventos Históricos</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Historical Events</h2>
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto">
@@ -205,7 +205,7 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
                     </div>
                     <div className="bg-red-50 border border-red-200 rounded p-2">
                       <p className="text-xs text-red-800">
-                        <strong>Impacto histórico:</strong> {event.impact}
+                        <strong>Historical impact:</strong> {event.impact}
                       </p>
                     </div>
                   </div>
@@ -216,10 +216,10 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
 
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              📊 Datos validados con Copernicus ERA5 Reanalysis (1979-presente)
+              📊 Data validated with Copernicus ERA5 Reanalysis (1979-present)
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              🎯 Patrones calibrados con eventos históricos de Madrid
+              🎯 Patterns calibrated with Madrid historical events
             </p>
           </div>
         </div>
@@ -229,20 +229,20 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-green-500" />
-            <h2 className="text-xl font-semibold text-gray-800">Análisis Comparativo: Sin Sistema vs Con Sistema</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Comparative Analysis: Without System vs With System</h2>
           </div>
           <button
             onClick={() => setShowComparison(!showComparison)}
             className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition-colors"
           >
-            {showComparison ? 'Ocultar' : 'Ver Comparación'}
+            {showComparison ? 'Hide' : 'Show Comparison'}
           </button>
         </div>
 
         {showComparison && (
           <div className="space-y-4">
             <p className="text-sm text-gray-600 mb-4">
-              Simulación del impacto que habría tenido nuestro sistema durante eventos históricos reales
+              Simulation of the impact our system would have had during actual historical events
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -267,24 +267,24 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
                     <div className="bg-red-50 border border-red-200 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
                         <XCircle className="w-3 h-3 text-red-500" />
-                        <span className="font-medium text-red-700">Sin Sistema</span>
+                        <span className="font-medium text-red-700">Without System</span>
                       </div>
                       <div className="space-y-1 text-red-600">
-                        <div>👥 {comparison.withoutSystem.passengersAffected.toLocaleString()} afectados</div>
-                        <div>🚫 {comparison.withoutSystem.serviceCancellations} cancelaciones</div>
-                        <div>💰 {comparison.withoutSystem.economicImpact} pérdidas</div>
+                        <div>👥 {comparison.withoutSystem.passengersAffected.toLocaleString()} affected</div>
+                        <div>🚫 {comparison.withoutSystem.serviceCancellations} cancellations</div>
+                        <div>💰 {comparison.withoutSystem.economicImpact} losses</div>
                       </div>
                     </div>
                     
                     <div className="bg-green-50 border border-green-200 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
                         <Shield className="w-3 h-3 text-green-500" />
-                        <span className="font-medium text-green-700">Con Sistema</span>
+                        <span className="font-medium text-green-700">With System</span>
                       </div>
                       <div className="space-y-1 text-green-600">
-                        <div>🛡️ {comparison.withSystem.passengersProtected.toLocaleString()} protegidos</div>
-                        <div>✅ {comparison.withSystem.servicesMaintained} mantenidos</div>
-                        <div>💚 {comparison.withSystem.preventedLosses} ahorrados</div>
+                        <div>🛡️ {comparison.withSystem.passengersProtected.toLocaleString()} protected</div>
+                        <div>✅ {comparison.withSystem.servicesMaintained} maintained</div>
+                        <div>💚 {comparison.withSystem.preventedLosses} saved</div>
                       </div>
                     </div>
                   </div>
@@ -296,31 +296,31 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
               <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
                 <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-green-600" />
-                  Análisis Detallado: {selectedComparison.event.name}
+                  Detailed Analysis: {selectedComparison.event.name}
                 </h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h5 className="font-medium text-red-700 mb-2 flex items-center gap-1">
                       <XCircle className="w-4 h-4" />
-                      Situación Real (Sin Sistema)
+                      Actual Situation (Without System)
                     </h5>
                     <div className="bg-white rounded-lg p-3 space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-red-500" />
-                        <span><strong>{selectedComparison.withoutSystem.passengersAffected.toLocaleString()}</strong> pasajeros afectados</span>
+                        <span><strong>{selectedComparison.withoutSystem.passengersAffected.toLocaleString()}</strong> passengers affected</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <XCircle className="w-4 h-4 text-red-500" />
-                        <span><strong>{selectedComparison.withoutSystem.serviceCancellations}</strong> servicios cancelados</span>
+                        <span><strong>{selectedComparison.withoutSystem.serviceCancellations}</strong> services canceled</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-red-500" />
-                        <span>Recuperación en <strong>{selectedComparison.withoutSystem.recoveryTime}</strong></span>
+                        <span>Recovery in <strong>{selectedComparison.withoutSystem.recoveryTime}</strong></span>
                       </div>
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-red-500" />
-                        <span>Pérdidas: <strong>{selectedComparison.withoutSystem.economicImpact}</strong></span>
+                        <span>Losses: <strong>{selectedComparison.withoutSystem.economicImpact}</strong></span>
                       </div>
                     </div>
                   </div>
@@ -328,24 +328,24 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
                   <div>
                     <h5 className="font-medium text-green-700 mb-2 flex items-center gap-1">
                       <Shield className="w-4 h-4" />
-                      Proyección (Con Sistema)
+                      Projection (With System)
                     </h5>
                     <div className="bg-white rounded-lg p-3 space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-green-500" />
-                        <span>Alerta temprana: <strong>{selectedComparison.withSystem.earlyWarning}</strong></span>
+                        <span>Early warning: <strong>{selectedComparison.withSystem.earlyWarning}</strong></span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-green-500" />
-                        <span><strong>{selectedComparison.withSystem.passengersProtected.toLocaleString()}</strong> pasajeros protegidos</span>
+                        <span><strong>{selectedComparison.withSystem.passengersProtected.toLocaleString()}</strong> passengers protected</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span><strong>{selectedComparison.withSystem.servicesMaintained}</strong> servicios mantenidos</span>
+                        <span><strong>{selectedComparison.withSystem.servicesMaintained}</strong> services maintained</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-green-500" />
-                        <span>Pérdidas evitadas: <strong>{selectedComparison.withSystem.preventedLosses}</strong></span>
+                        <span>Losses prevented: <strong>{selectedComparison.withSystem.preventedLosses}</strong></span>
                       </div>
                     </div>
                   </div>
@@ -353,9 +353,9 @@ export default function HistoricalAnalysis({ weatherData, currentRiskScore }: Hi
 
                 <div className="mt-4 p-3 bg-blue-100 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    <strong>Valor del Sistema:</strong> La implementación de Chamartín Smart Resilience habría 
-                    reducido el impacto de {selectedComparison.event.name} significativamente, protegiendo vidas 
-                    y minimizando pérdidas económicas a través de la anticipación y respuesta automatizada.
+                    <strong>System Value:</strong> The implementation of Chamartín Smart Resilience would have 
+                    significantly reduced the impact of {selectedComparison.event.name}, protecting lives 
+                    and minimizing economic losses through anticipation and automated response.
                   </p>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 // Copernicus Climate Data Store API
-// Análisis histórico con validación ERA5 real para contexto y recomendaciones
+// Historical analysis with real ERA5 validation for context and recommendations
 
 export interface HistoricalEvent {
   name: string;
@@ -47,7 +47,7 @@ interface HistoricalContext {
 
 export const historicalEvents: HistoricalEvent[] = [
   {
-    name: "Borrasca Filomena",
+    name: "Storm Filomena",
     date: "2021-01-09",
     location: "Madrid - Chamartín",
     maxPrecipitation: 45.2,
@@ -55,69 +55,69 @@ export const historicalEvents: HistoricalEvent[] = [
     minTemperature: -6.8,
     maxTemperature: 2.1,
     minPressure: 985.3,
-    description: "Nevada histórica que paralizó Madrid durante días",
-    impact: "400,000 pasajeros afectados, 72h de interrupción total del servicio"
+    description: "Historic snowfall that paralyzed Madrid for days",
+    impact: "400,000 passengers affected, 72h total service interruption"
   },
   {
     name: "DANA Valencia-Madrid",
     date: "2024-10-29",
-    location: "Corredor Mediterráneo-Madrid",
+    location: "Mediterranean Corridor-Madrid",
     maxPrecipitation: 78.4,
     maxWindSpeed: 42.1,
     minTemperature: 12.3,
     maxTemperature: 18.7,
     minPressure: 992.1,
-    description: "DANA severa con precipitaciones torrenciales",
-    impact: "250,000 pasajeros redirigidos, 48h de servicios limitados"
+    description: "Severe DANA with torrential precipitation",
+    impact: "250,000 passengers rerouted, 48h limited services"
   },
   {
-    name: "Ola de Calor Extremo",
+    name: "Extreme Heat Wave",
     date: "2023-07-14",
-    location: "Madrid - Área Metropolitana",
+    location: "Madrid - Metropolitan Area",
     maxPrecipitation: 0,
     maxWindSpeed: 15.2,
     minTemperature: 28.9,
     maxTemperature: 44.3,
     minPressure: 1018.7,
-    description: "Temperaturas record que afectaron infraestructura ferroviaria",
-    impact: "Velocidad reducida en 15% de trayectos, expansión térmica de vías"
+    description: "Record temperatures affecting railway infrastructure",
+    impact: "Speed reduced on 15% of routes, thermal expansion of tracks"
   },
   {
-    name: "Tormenta Granizo Madrid",
+    name: "Madrid Hail Storm",
     date: "2022-08-30",
-    location: "Madrid Centro-Norte",
+    location: "Madrid Center-North",
     maxPrecipitation: 32.1,
     maxWindSpeed: 68.4,
     minTemperature: 19.2,
     maxTemperature: 31.8,
     minPressure: 996.4,
-    description: "Tormenta severa con granizo de hasta 4cm de diámetro",
-    impact: "6h de suspensión parcial, daños en señalización exterior"
+    description: "Severe storm with hail up to 4cm diameter",
+    impact: "6h partial suspension, damage to outdoor signage"
   },
   {
-    name: "Borrasca Celia",
+    name: "Storm Celia",
     date: "2023-12-18",
-    location: "Madrid - Corredor Atlántico",
+    location: "Madrid - Atlantic Corridor",
     maxPrecipitation: 28.7,
     maxWindSpeed: 52.3,
     minTemperature: 4.1,
     maxTemperature: 12.5,
     minPressure: 988.9,
-    description: "Vientos huracanados y lluvia intensa",
-    impact: "120,000 pasajeros afectados, 24h de servicios interrumpidos"
+    description: "Hurricane-force winds and heavy rain",
+    impact: "120,000 passengers affected, 24h interrupted services"
   }
 ];
 
-// Función mejorada para encontrar evento histórico similar con tolerancias calibradas por ERA5
+// Enhanced function to find similar historical event with ERA5-calibrated tolerances
 export function findSimilarHistoricalEvent(
   currentWeather: WeatherConditions, 
   era5Context?: HistoricalContext
 ): HistoricalEvent | null {
   
-  // Tolerancias adaptativas basadas en contexto ERA5
+  // Adaptive tolerances based on ERA5 context
   const getTolerances = () => {
     if (!era5Context) {
-      // Tolerancias por defecto sin contexto ERA5
+      // Default tolerances without ERA5 context
       return {
         precipitation: 15,
         wind: 20,
@@ -125,13 +125,13 @@ export function findSimilarHistoricalEvent(
       };
     }
     
-    // Ajustar tolerancias según anomalías ERA5
+    // Adjust tolerances based on ERA5 anomalies
     const tempAnomaly = Math.abs(era5Context.anomaly.temperature);
     const precipAnomaly = Math.abs(era5Context.anomaly.precipitation);
     const windAnomaly = Math.abs(era5Context.anomaly.windSpeed);
     
     return {
-      precipitation: Math.max(10, 15 - precipAnomaly * 2), // Menor tolerancia si hay anomalía
+      precipitation: Math.max(10, 15 - precipAnomaly * 2), // Lower tolerance if anomaly exists
       wind: Math.max(15, 20 - windAnomaly * 2),
       temperature: Math.max(5, 8 - tempAnomaly * 0.5)
     };
@@ -139,27 +139,27 @@ export function findSimilarHistoricalEvent(
   
   const tolerances = getTolerances();
   
-  // Buscar eventos con condiciones similares usando tolerancias calibradas
+  // Search for events with similar conditions using calibrated tolerances
   const similarEvents = historicalEvents.filter(event => {
     const precipitationMatch = Math.abs(event.maxPrecipitation - currentWeather.precipitation) < tolerances.precipitation;
     const windMatch = Math.abs(event.maxWindSpeed - currentWeather.windSpeed) < tolerances.wind;
     const tempInRange = currentWeather.temperature >= (event.minTemperature - tolerances.temperature) && 
                        currentWeather.temperature <= (event.maxTemperature + tolerances.temperature);
     
-    // Al menos 2 de 3 condiciones deben coincidir para considerar similaridad
+    // At least 2 of 3 conditions must match to consider similarity
     const matches = [precipitationMatch, windMatch, tempInRange].filter(Boolean).length;
     return matches >= 2;
   });
 
   if (similarEvents.length > 0) {
-    // Devolver el evento más reciente de los similares
+    // Return the most recent similar event
     return similarEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
   }
 
   return null;
 }
 
-// Función mejorada para generar recomendaciones basadas en patrones históricos + validación ERA5
+// Enhanced function to generate recommendations based on historical patterns + ERA5 validation
 export function generateHistoricalRecommendations(
   currentWeather: WeatherConditions, 
   currentRiskScore: number,
@@ -173,55 +173,55 @@ export function generateHistoricalRecommendations(
   era5Insights: string[];
 } {
   const similarEvent = findSimilarHistoricalEvent(currentWeather, era5Context);
-  let historicalContext = 'Sin patrones históricos similares identificados';
+  let historicalContext = 'No similar historical patterns identified';
   let recommendations: string[] = [];
   let era5Insights: string[] = [];
   let confidence = 50;
   let warningLevel: 'info' | 'watch' | 'advisory' | 'warning' = 'info';
 
-  // Agregar insights de validación ERA5
+  // Add ERA5 validation insights
   if (era5Validation && era5Context) {
     const anomalyLevel = era5Validation.anomalyLevel;
     
     switch (anomalyLevel) {
       case 'extreme':
-        era5Insights.push(`🔴 Condiciones EXTREMAS detectadas por ERA5 - Sin precedentes en últimos ${era5Validation.similarDaysFound} días`);
-        era5Insights.push(`Anomalía temperatura: ${era5Context.anomaly.temperature > 0 ? '+' : ''}${era5Context.anomaly.temperature.toFixed(1)}°C`);
+        era5Insights.push(`🔴 EXTREME conditions detected by ERA5 - Unprecedented in last ${era5Validation.similarDaysFound} days`);
+        era5Insights.push(`Temperature anomaly: ${era5Context.anomaly.temperature > 0 ? '+' : ''}${era5Context.anomaly.temperature.toFixed(1)}°C`);
         if (Math.abs(era5Context.anomaly.precipitation) > 5) {
-          era5Insights.push(`Anomalía precipitación: ${era5Context.anomaly.precipitation > 0 ? '+' : ''}${era5Context.anomaly.precipitation.toFixed(1)}mm/h`);
+          era5Insights.push(`Precipitation anomaly: ${era5Context.anomaly.precipitation > 0 ? '+' : ''}${era5Context.anomaly.precipitation.toFixed(1)}mm/h`);
         }
         confidence = Math.max(confidence, 90);
         break;
         
       case 'high':
-        era5Insights.push(`🟠 Condiciones ALTAS anómalas según ERA5 - Inusuales para la época`);
-        era5Insights.push(`Desviación significativa respecto a promedio histórico reciente`);
+        era5Insights.push(`🟠 HIGH anomalous conditions according to ERA5 - Unusual for the season`);
+        era5Insights.push(`Significant deviation from recent historical average`);
         confidence = Math.max(confidence, 80);
         break;
         
       case 'moderate':
-        era5Insights.push(`🟡 Condiciones moderadamente anómalas - Por encima/debajo de lo normal`);
+        era5Insights.push(`🟡 Moderately anomalous conditions - Above/below normal`);
         confidence = Math.max(confidence, 70);
         break;
         
       case 'normal':
-        era5Insights.push(`🟢 Condiciones dentro de rangos normales según ERA5`);
-        era5Insights.push(`Patrón meteorológico típico para esta época del año`);
+        era5Insights.push(`🟢 Conditions within normal ranges according to ERA5`);
+        era5Insights.push(`Typical weather pattern for this time of year`);
         confidence = Math.min(confidence + 10, 95);
         break;
     }
   }
 
-  // Lógica de recomendaciones basada en evento histórico similar
+  // Recommendation logic based on similar historical event
   if (similarEvent) {
-    historicalContext = `Condiciones similares a ${similarEvent.name} (${similarEvent.date}): ${similarEvent.description}`;
+    historicalContext = `Conditions similar to ${similarEvent.name} (${similarEvent.date}): ${similarEvent.description}`;
     confidence = Math.max(confidence, 85);
     
-    // Ajustar nivel de alerta basado en score actual + validación ERA5
+    // Adjust alert level based on current score + ERA5 validation
     let adjustedRiskScore = currentRiskScore;
     
     if (era5Validation) {
-      // Incrementar riesgo si hay anomalías altas
+      // Increase risk if high anomalies present
       const anomalyBonus = {
         'extreme': 15,
         'high': 10,
@@ -235,49 +235,49 @@ export function generateHistoricalRecommendations(
     if (adjustedRiskScore >= 70) {
       warningLevel = 'warning';
       recommendations = [
-        `⚠️ PATRÓN CRÍTICO: Condiciones similares a ${similarEvent.name}`,
-        `Impacto histórico: ${similarEvent.impact}`,
-        'ACTIVAR protocolos de emergencia preventivos',
-        'Monitorización continua OBLIGATORIA',
-        'Preparar comunicación de crisis a pasajeros',
-        'Coordinar con servicios de emergencia'
+        `⚠️ CRITICAL PATTERN: Conditions similar to ${similarEvent.name}`,
+        `Historical impact: ${similarEvent.impact}`,
+        'ACTIVATE preventive emergency protocols',
+        'Continuous monitoring MANDATORY',
+        'Prepare crisis communication to passengers',
+        'Coordinate with emergency services'
       ];
       
       if (era5Validation?.anomalyLevel === 'extreme') {
-        recommendations.unshift('🚨 ALERTA MÁXIMA: Condiciones sin precedentes recientes según ERA5');
+        recommendations.unshift('🚨 MAXIMUM ALERT: Unprecedented recent conditions according to ERA5');
       }
       
     } else if (adjustedRiskScore >= 50) {
       warningLevel = 'advisory';
       recommendations = [
-        `🔶 PATRÓN DETECTADO: Similitud con ${similarEvent.name}`,
-        `Precedente histórico: ${similarEvent.impact}`,
-        'Mantener vigilancia reforzada',
-        'Revisar y preparar protocolos de contingencia',
-        'Personal operativo en alerta preventiva',
-        'Comunicación proactiva recomendada'
+        `🔶 PATTERN DETECTED: Similarity to ${similarEvent.name}`,
+        `Historical precedent: ${similarEvent.impact}`,
+        'Maintain enhanced surveillance',
+        'Review and prepare contingency protocols',
+        'Operational staff on preventive alert',
+        'Proactive communication recommended'
       ];
       
     } else if (adjustedRiskScore >= 30) {
       warningLevel = 'watch';
       recommendations = [
-        `📋 Patrón histórico: Recuerda a ${similarEvent.name}`,
-        'Monitorización estándar apropiada',
-        'Mantener protocolos de vigilancia normal',
-        'Sin acciones inmediatas requeridas'
+        `📋 Historical pattern: Reminiscent of ${similarEvent.name}`,
+        'Standard monitoring appropriate',
+        'Maintain normal surveillance protocols',
+        'No immediate actions required'
       ];
       
     } else {
       warningLevel = 'info';
       recommendations = [
-        `ℹ️ Referencia histórica: Condiciones similares a ${similarEvent.name}`,
-        'Condiciones dentro de parámetros operativos normales',
-        'Seguimiento rutinario suficiente'
+        `ℹ️ Historical reference: Conditions similar to ${similarEvent.name}`,
+        'Conditions within normal operational parameters',
+        'Routine monitoring sufficient'
       ];
     }
     
   } else {
-    // Sin eventos similares - recomendaciones basadas en ERA5 y score
+    // No similar events - recommendations based on ERA5 and score
     const effectiveScore = era5Validation ? 
       Math.min(100, currentRiskScore + ({'extreme': 20, 'high': 15, 'moderate': 5, 'normal': 0}[era5Validation.anomalyLevel])) :
       currentRiskScore;
@@ -285,22 +285,22 @@ export function generateHistoricalRecommendations(
     if (effectiveScore >= 50) {
       warningLevel = 'watch';
       recommendations = [
-        '🔍 Condiciones atípicas sin precedentes históricos claros',
-        'Mantener vigilancia estándar reforzada',
-        'Considerar consulta con meteorología especializada',
-        'Monitorear evolución cada 15 minutos'
+        '🔍 Atypical conditions without clear historical precedents',
+        'Maintain enhanced standard surveillance',
+        'Consider consultation with specialized meteorology',
+        'Monitor evolution every 15 minutes'
       ];
       
       if (era5Validation?.anomalyLevel === 'extreme') {
-        recommendations.unshift('⚠️ ERA5 confirma: Condiciones extremadamente inusuales');
+        recommendations.unshift('⚠️ ERA5 confirms: Extremely unusual conditions');
         warningLevel = 'advisory';
       }
       
     } else {
       recommendations = [
-        'Condiciones normales sin patrones de riesgo identificados',
-        'Procedimientos estándar aplicables',
-        'Seguimiento rutinario adecuado'
+        'Normal conditions without identified risk patterns',
+        'Standard procedures applicable',
+        'Routine monitoring adequate'
       ];
     }
   }
@@ -314,40 +314,40 @@ export function generateHistoricalRecommendations(
   };
 }
 
-// Función para obtener nivel de confianza combinado (histórico + ERA5)
+// Function to get combined confidence (historical + ERA5)
 export function getCombinedConfidence(
   historicalConfidence: number,
   era5Validation?: ERA5ValidationData
 ): number {
   if (!era5Validation) {
-    return Math.max(30, historicalConfidence - 20); // Penalizar sin validación ERA5
+    return Math.max(30, historicalConfidence - 20); // Penalize without ERA5 validation
   }
   
-  // Combinar confianzas con pesos
+  // Combine confidences with weights
   const era5Weight = 0.4;
   const historicalWeight = 0.6;
   
   const combinedConfidence = (historicalConfidence * historicalWeight) + (era5Validation.confidence * era5Weight);
   
-  // Bonificar si ambas fuentes están de acuerdo (alta confianza)
+  // Bonus if both sources agree (high confidence)
   const agreement = Math.abs(historicalConfidence - era5Validation.confidence) < 20;
   const bonus = agreement ? 5 : 0;
   
   return Math.min(95, Math.round(combinedConfidence + bonus));
 }
 
-// Función auxiliar para convertir nivel de anomalía ERA5 en factor de riesgo
+// Helper function to convert ERA5 anomaly level to risk factor
 export function era5AnomalyToRiskFactor(anomalyLevel: string): number {
   switch (anomalyLevel) {
-    case 'extreme': return 1.2; // 20% más riesgo
-    case 'high': return 1.15;   // 15% más riesgo
-    case 'moderate': return 1.05; // 5% más riesgo
-    case 'normal': return 1.0;   // Sin cambio
+    case 'extreme': return 1.2; // 20% more risk
+    case 'high': return 1.15;   // 15% more risk
+    case 'moderate': return 1.05; // 5% more risk
+    case 'normal': return 1.0;   // No change
     default: return 1.0;
   }
 }
 
-// Función para análisis temporal de tendencias (usando datos ERA5 si están disponibles)
+// Function for temporal trend analysis (using ERA5 data if available)
 export function analyzeTrends(
   currentWeather: WeatherConditions,
   era5Context?: HistoricalContext
@@ -359,26 +359,26 @@ export function analyzeTrends(
   const alerts: string[] = [];
   
   if (era5Context) {
-    // Análisis de tendencias basado en anomalías ERA5
+    // Trend analysis based on ERA5 anomalies
     if (Math.abs(era5Context.anomaly.temperature) > 5) {
-      const direction = era5Context.anomaly.temperature > 0 ? 'superior' : 'inferior';
-      trends.push(`Temperatura ${Math.abs(era5Context.anomaly.temperature).toFixed(1)}°C ${direction} a la media histórica`);
+      const direction = era5Context.anomaly.temperature > 0 ? 'above' : 'below';
+      trends.push(`Temperature ${Math.abs(era5Context.anomaly.temperature).toFixed(1)}°C ${direction} historical average`);
     }
     
     if (era5Context.anomaly.precipitation > 3) {
-      trends.push(`Precipitación ${era5Context.anomaly.precipitation.toFixed(1)}mm/h por encima de lo normal`);
-      alerts.push('Precipitación anómalamente alta detectada');
+      trends.push(`Precipitation ${era5Context.anomaly.precipitation.toFixed(1)}mm/h above normal`);
+      alerts.push('Anomalously high precipitation detected');
     }
     
     if (Math.abs(era5Context.anomaly.windSpeed) > 10) {
-      const intensity = era5Context.anomaly.windSpeed > 0 ? 'mayor' : 'menor';
-      trends.push(`Viento ${intensity} intensidad que promedio histórico`);
+      const intensity = era5Context.anomaly.windSpeed > 0 ? 'higher' : 'lower';
+      trends.push(`Wind ${intensity} intensity than historical average`);
     }
     
     if (Math.abs(era5Context.anomaly.pressure) > 15) {
-      const direction = era5Context.anomaly.pressure > 0 ? 'alta' : 'baja';
-      trends.push(`Presión atmosférica ${direction} - posible cambio meteorológico`);
-      alerts.push('Variación significativa de presión detectada');
+      const direction = era5Context.anomaly.pressure > 0 ? 'high' : 'low';
+      trends.push(`Atmospheric pressure ${direction} - possible weather change`);
+      alerts.push('Significant pressure variation detected');
     }
   }
   

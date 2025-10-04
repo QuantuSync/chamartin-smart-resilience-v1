@@ -14,10 +14,10 @@ export default function PlatformCard({ platform }: PlatformCardProps) {
   };
 
   const getRiskText = (score: number) => {
-    if (score >= 70) return 'Crítico';
-    if (score >= 50) return 'Alto';
-    if (score >= 30) return 'Medio';
-    return 'Bajo';
+    if (score >= 70) return 'Critical';
+    if (score >= 50) return 'High';
+    if (score >= 30) return 'Medium';
+    return 'Low';
   };
 
   return (
@@ -37,7 +37,7 @@ export default function PlatformCard({ platform }: PlatformCardProps) {
         <div className="flex items-center gap-2">
           <div className={`w-3 h-3 rounded-full ${getRiskColor(platform.riskScore)}`}></div>
           <span className="text-sm text-gray-600">
-            Riesgo: {getRiskText(platform.riskScore)}
+            Risk: {getRiskText(platform.riskScore)}
           </span>
         </div>
         <span className="text-2xl font-bold text-gray-800">{platform.riskScore}</span>
@@ -46,7 +46,7 @@ export default function PlatformCard({ platform }: PlatformCardProps) {
       {platform.riskScore >= 50 && (
         <div className="mt-2 flex items-center gap-1 text-orange-600">
           <AlertTriangle className="w-4 h-4" />
-          <span className="text-xs">Requiere atención</span>
+          <span className="text-xs">Requires attention</span>
         </div>
       )}
     </div>

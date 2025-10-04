@@ -43,42 +43,42 @@ export default function RecommendationsPanel({
     const isRushHour = operationalContext?.isRushHour || false;
     const totalPassengers = operationalContext?.estimatedPassengers || 200;
     
-    // Plataformas críticas y de alto riesgo
+    // Critical and high-risk platforms
     const criticalPlatforms = platforms.filter(p => p.riskScore >= 80);
     const highRiskPlatforms = platforms.filter(p => p.riskScore >= 60 && p.riskScore < 80);
     const exposedPlatforms = platforms.filter(p => !p.isRoofed);
 
-    // RECOMENDACIONES CRÍTICAS - Acción inmediata requerida
+    // CRITICAL RECOMMENDATIONS - Immediate action required
     if (weatherData.precipitation > 20) {
       recommendations.push({
         id: 'precipitation_extreme',
         type: 'immediate',
         severity: 'critical',
-        title: 'Precipitación Extrema - Evacuación Inmediata',
-        description: `Lluvia torrencial de ${weatherData.precipitation.toFixed(1)} mm/h supera umbrales de seguridad`,
+        title: 'Extreme Precipitation - Immediate Evacuation',
+        description: `Torrential rain of ${weatherData.precipitation.toFixed(1)} mm/h exceeds safety thresholds`,
         actions: [
-          'EVACUACIÓN INMEDIATA de andenes descubiertos',
-          'Suspender todos los servicios en plataformas expuestas',
-          'Activar protocolo de emergencia meteorológica',
-          'Coordinar con servicios de emergencia locales'
+          'IMMEDIATE EVACUATION of uncovered platforms',
+          'Suspend all services on exposed platforms',
+          'Activate weather emergency protocol',
+          'Coordinate with local emergency services'
         ],
         platforms: exposedPlatforms.map(p => p.name),
-        timeframe: 'Inmediato (0-5 minutos)',
+        timeframe: 'Immediate (0-5 minutes)',
         impact: {
           passengersAffected: Math.round(totalPassengers * 0.6),
-          estimatedDelay: '2-4 horas',
-          economicImpact: 'Alto'
+          estimatedDelay: '2-4 hours',
+          economicImpact: 'High'
         },
         confidence: 95,
         automaticActions: [
-          'Cierre automático de accesos a andenes expuestos',
-          'Activación de sistemas de drenaje de emergencia',
-          'Alerta automática a control de tráfico'
+          'Automatic closure of exposed platform access',
+          'Emergency drainage system activation',
+          'Automatic alert to traffic control'
         ],
         manualActions: [
-          'Evacuación dirigida por personal',
-          'Comunicación de emergencia a pasajeros',
-          'Coordinación con bomberos y protección civil'
+          'Staff-directed evacuation',
+          'Emergency communication to passengers',
+          'Coordination with firefighters and civil protection'
         ]
       });
     }
@@ -88,63 +88,63 @@ export default function RecommendationsPanel({
         id: 'wind_extreme',
         type: 'immediate',
         severity: 'critical',
-        title: 'Vientos Extremos - Suspensión de Servicios',
-        description: `Viento de ${weatherData.windSpeed.toFixed(1)} m/s presenta riesgo de seguridad inmediato`,
+        title: 'Extreme Winds - Service Suspension',
+        description: `Wind of ${weatherData.windSpeed.toFixed(1)} m/s presents immediate safety risk`,
         actions: [
-          'SUSPENSIÓN INMEDIATA de servicios en andenes expuestos',
-          'Refugio obligatorio para pasajeros',
-          'Asegurar elementos móviles y señalización',
-          'Evaluación de daños en tiempo real'
+          'IMMEDIATE SUSPENSION of services on exposed platforms',
+          'Mandatory shelter for passengers',
+          'Secure mobile elements and signage',
+          'Real-time damage assessment'
         ],
         platforms: exposedPlatforms.map(p => p.name),
-        timeframe: 'Inmediato (0-2 minutos)',
+        timeframe: 'Immediate (0-2 minutes)',
         impact: {
           passengersAffected: Math.round(totalPassengers * 0.8),
-          estimatedDelay: '1-3 horas',
-          economicImpact: 'Muy Alto'
+          estimatedDelay: '1-3 hours',
+          economicImpact: 'Very High'
         },
         confidence: 90,
         automaticActions: [
-          'Bloqueo automático de puertas de andén',
-          'Sistemas de megafonía en alerta máxima'
+          'Automatic platform door lock',
+          'PA systems on maximum alert'
         ],
         manualActions: [
-          'Inspección visual de infraestructura',
-          'Remoción de objetos sueltos'
+          'Visual infrastructure inspection',
+          'Removal of loose objects'
         ]
       });
     }
 
-    // RECOMENDACIONES DE ALTO RIESGO - Acción en 15-30 minutos
+    // HIGH RISK RECOMMENDATIONS - Action in 15-30 minutes
     if (weatherData.precipitation > 8 && weatherData.precipitation <= 20) {
       const affectedPassengers = Math.round(totalPassengers * 0.4);
       recommendations.push({
         id: 'precipitation_high',
         type: 'immediate',
         severity: 'high',
-        title: 'Lluvia Intensa - Medidas Preventivas Urgentes',
-        description: `Precipitación de ${weatherData.precipitation.toFixed(1)} mm/h requiere acción preventiva`,
+        title: 'Heavy Rain - Urgent Preventive Measures',
+        description: `Precipitation of ${weatherData.precipitation.toFixed(1)} mm/h requires preventive action`,
         actions: [
-          'Limitar acceso a andenes descubiertos',
-          'Desplegar personal adicional para asistencia',
-          'Activar sistemas de drenaje preventivo',
-          'Preparar equipos de limpieza post-lluvia'
+          'Limit access to uncovered platforms',
+          'Deploy additional staff for assistance',
+          'Activate preventive drainage systems',
+          'Prepare post-rain cleaning teams'
         ],
         platforms: exposedPlatforms.slice(0, 2).map(p => p.name),
-        timeframe: '15-30 minutos',
+        timeframe: '15-30 minutes',
         impact: {
           passengersAffected: affectedPassengers,
-          estimatedDelay: '30-60 minutos',
-          economicImpact: 'Medio'
+          estimatedDelay: '30-60 minutes',
+          economicImpact: 'Medium'
         },
         confidence: 85,
         automaticActions: [
-          'Incremento frecuencia de anuncios',
-          'Activación luces de emergencia'
+          'Increased announcement frequency',
+          'Emergency lights activation'
         ],
         manualActions: [
-          'Colocación señalización temporal',
-          'Distribución de paraguas emergencia'
+          'Temporary signage placement',
+          'Emergency umbrella distribution'
         ]
       });
     }
@@ -154,62 +154,62 @@ export default function RecommendationsPanel({
         id: 'wind_high',
         type: 'immediate',
         severity: 'high',
-        title: 'Viento Fuerte - Vigilancia Reforzada',
-        description: `Viento sostenido de ${weatherData.windSpeed.toFixed(1)} m/s requiere supervisión activa`,
+        title: 'Strong Wind - Enhanced Surveillance',
+        description: `Sustained wind of ${weatherData.windSpeed.toFixed(1)} m/s requires active supervision`,
         actions: [
-          'Aumentar vigilancia en andenes expuestos',
-          'Asegurar paneles informativos y señalización',
-          'Personal de seguridad en posiciones estratégicas',
-          'Monitorización continua de condiciones'
+          'Increase surveillance on exposed platforms',
+          'Secure information panels and signage',
+          'Security personnel at strategic positions',
+          'Continuous condition monitoring'
         ],
         platforms: highRiskPlatforms.map(p => p.name),
-        timeframe: '10-20 minutos',
+        timeframe: '10-20 minutes',
         impact: {
           passengersAffected: Math.round(totalPassengers * 0.3),
-          estimatedDelay: '15-30 minutos',
-          economicImpact: 'Bajo-Medio'
+          estimatedDelay: '15-30 minutes',
+          economicImpact: 'Low-Medium'
         },
         confidence: 80,
         automaticActions: [
-          'Sensores de viento en alerta',
-          'Cámaras enfocadas en elementos móviles'
+          'Wind sensors on alert',
+          'Cameras focused on mobile elements'
         ],
         manualActions: [
-          'Inspección cada 15 minutos',
-          'Comunicación preventiva a pasajeros'
+          'Inspection every 15 minutes',
+          'Preventive communication to passengers'
         ]
       });
     }
 
-    // Temperaturas extremas
+    // Extreme temperatures
     if (weatherData.temperature > 38) {
       recommendations.push({
         id: 'heat_extreme',
         type: 'preventive',
         severity: 'high',
-        title: 'Calor Extremo - Medidas de Protección',
-        description: `Temperatura de ${weatherData.temperature.toFixed(1)}°C puede causar malestar y dilatación térmica`,
+        title: 'Extreme Heat - Protection Measures',
+        description: `Temperature of ${weatherData.temperature.toFixed(1)}°C may cause discomfort and thermal expansion`,
         actions: [
-          'Habilitar todas las áreas climatizadas',
-          'Distribuir agua en andenes expuestos',
-          'Verificar expansión térmica en vías',
-          'Reducir velocidad de trenes si es necesario'
+          'Enable all air-conditioned areas',
+          'Distribute water on exposed platforms',
+          'Verify thermal expansion on tracks',
+          'Reduce train speed if necessary'
         ],
         platforms: exposedPlatforms.map(p => p.name),
-        timeframe: '30-45 minutos',
+        timeframe: '30-45 minutes',
         impact: {
           passengersAffected: Math.round(totalPassengers * 0.5),
-          estimatedDelay: '10-20 minutos',
-          economicImpact: 'Medio'
+          estimatedDelay: '10-20 minutes',
+          economicImpact: 'Medium'
         },
         confidence: 75,
         automaticActions: [
-          'Sistemas de nebulización activados',
-          'Climatización al máximo'
+          'Misting systems activated',
+          'Air conditioning at maximum'
         ],
         manualActions: [
-          'Distribución de agua gratuita',
-          'Personal médico en alerta'
+          'Free water distribution',
+          'Medical personnel on alert'
         ]
       });
     }
@@ -219,131 +219,131 @@ export default function RecommendationsPanel({
         id: 'frost_risk',
         type: 'preventive',
         severity: 'high',
-        title: 'Riesgo de Formación de Hielo',
-        description: `Temperatura de ${weatherData.temperature.toFixed(1)}°C puede generar superficies resbaladizas`,
+        title: 'Ice Formation Risk',
+        description: `Temperature of ${weatherData.temperature.toFixed(1)}°C may generate slippery surfaces`,
         actions: [
-          'Activar sistemas antihielo en andenes',
-          'Esparcir sal de deshielo en zonas críticas',
-          'Señalización de advertencia de superficies resbaladizas',
-          'Personal con equipos antideslizantes'
+          'Activate anti-ice systems on platforms',
+          'Spread de-icing salt in critical areas',
+          'Warning signage for slippery surfaces',
+          'Staff with anti-slip equipment'
         ],
         platforms: platforms.map(p => p.name),
-        timeframe: '20-40 minutos',
+        timeframe: '20-40 minutes',
         impact: {
           passengersAffected: totalPassengers,
-          estimatedDelay: '5-15 minutos',
-          economicImpact: 'Bajo'
+          estimatedDelay: '5-15 minutes',
+          economicImpact: 'Low'
         },
         confidence: 80,
         automaticActions: [
-          'Calefacción de andenes activada',
-          'Sistemas antihielo en funcionamiento'
+          'Platform heating activated',
+          'Anti-ice systems in operation'
         ],
         manualActions: [
-          'Aplicación manual de sal',
-          'Colocación alfombras antideslizantes'
+          'Manual salt application',
+          'Anti-slip mat placement'
         ]
       });
     }
 
-    // RECOMENDACIONES PREVENTIVAS - Información y preparación
+    // PREVENTIVE RECOMMENDATIONS - Information and preparation
     if (weatherData.pressure < 1005 && weatherData.pressure > 995) {
       recommendations.push({
         id: 'pressure_low',
         type: 'preventive',
         severity: 'medium',
-        title: 'Presión Baja - Posible Deterioro Meteorológico',
-        description: `Presión de ${weatherData.pressure.toFixed(0)} hPa indica posible empeoramiento`,
+        title: 'Low Pressure - Possible Weather Deterioration',
+        description: `Pressure of ${weatherData.pressure.toFixed(0)} hPa indicates possible worsening`,
         actions: [
-          'Consultar pronóstico meteorológico extendido',
-          'Preparar equipos de emergencia',
-          'Informar a personal sobre posible escalada',
-          'Revisar protocolos de contingencia'
+          'Check extended weather forecast',
+          'Prepare emergency equipment',
+          'Inform staff about possible escalation',
+          'Review contingency protocols'
         ],
-        timeframe: '1-2 horas',
+        timeframe: '1-2 hours',
         impact: {
           passengersAffected: 0,
-          estimatedDelay: 'Preventivo',
-          economicImpact: 'Mínimo'
+          estimatedDelay: 'Preventive',
+          economicImpact: 'Minimal'
         },
         confidence: 65,
         automaticActions: [
-          'Monitorización automática cada 10 min'
+          'Automatic monitoring every 10 min'
         ],
         manualActions: [
-          'Revisión manual de equipos',
-          'Contacto con servicios meteorológicos'
+          'Manual equipment review',
+          'Contact with weather services'
         ]
       });
     }
 
-    // Recomendaciones específicas por contexto horario
+    // Time-specific recommendations
     if (isRushHour && (weatherData.precipitation > 2 || weatherData.windSpeed > 10)) {
       recommendations.push({
         id: 'rush_hour_weather',
         type: 'immediate',
         severity: 'high',
-        title: 'Condiciones Adversas en Hora Punta',
-        description: 'Combinación de mal tiempo y alta afluencia requiere gestión especial',
+        title: 'Adverse Conditions During Rush Hour',
+        description: 'Combination of bad weather and high traffic requires special management',
         actions: [
-          'Reforzar personal en andenes principales',
-          'Comunicación intensiva sobre retrasos',
-          'Habilitar rutas alternativas',
-          'Gestión activa de multitudes'
+          'Reinforce staff on main platforms',
+          'Intensive communication about delays',
+          'Enable alternative routes',
+          'Active crowd management'
         ],
-        timeframe: 'Inmediato',
+        timeframe: 'Immediate',
         impact: {
-          passengersAffected: Math.round(totalPassengers * 1.5), // Hora punta
-          estimatedDelay: '20-40 minutos',
-          economicImpact: 'Alto'
+          passengersAffected: Math.round(totalPassengers * 1.5), // Rush hour
+          estimatedDelay: '20-40 minutes',
+          economicImpact: 'High'
         },
         confidence: 90,
         automaticActions: [
-          'Anuncios cada 2 minutos',
-          'Señalización dinámica actualizada'
+          'Announcements every 2 minutes',
+          'Dynamic signage updated'
         ],
         manualActions: [
-          'Personal adicional desplegado',
-          'Coordinación con transporte alternativo'
+          'Additional staff deployed',
+          'Coordination with alternative transport'
         ]
       });
     }
 
-    // Horario nocturno con condiciones adversas
+    // Nighttime with adverse conditions
     if ((currentHour >= 22 || currentHour <= 6) && (weatherData.precipitation > 5 || weatherData.windSpeed > 15)) {
       recommendations.push({
         id: 'night_weather',
         type: 'preventive',
         severity: 'medium',
-        title: 'Condiciones Nocturnas Adversas',
-        description: 'Mal tiempo en horario nocturno con personal reducido',
+        title: 'Adverse Night Conditions',
+        description: 'Bad weather during nighttime with reduced staff',
         actions: [
-          'Incrementar iluminación en andenes',
-          'Personal de seguridad en ronda continua',
-          'Comunicación reforzada por megafonía',
-          'Preparar asistencia para pasajeros vulnerables'
+          'Increase lighting on platforms',
+          'Security personnel on continuous patrol',
+          'Enhanced PA communication',
+          'Prepare assistance for vulnerable passengers'
         ],
-        timeframe: 'Continuo',
+        timeframe: 'Continuous',
         impact: {
-          passengersAffected: Math.round(totalPassengers * 0.3), // Menos pasajeros nocturnos
-          estimatedDelay: '10-20 minutos',
-          economicImpact: 'Bajo'
+          passengersAffected: Math.round(totalPassengers * 0.3), // Fewer nighttime passengers
+          estimatedDelay: '10-20 minutes',
+          economicImpact: 'Low'
         },
         confidence: 70,
         automaticActions: [
-          'Iluminación nocturna al 100%',
-          'Sistemas de vigilancia activos'
+          'Night lighting at 100%',
+          'Surveillance systems active'
         ],
         manualActions: [
-          'Rondas de seguridad cada 30 min',
-          'Asistencia personalizada'
+          'Security rounds every 30 min',
+          'Personalized assistance'
         ]
       });
     }
 
     return recommendations
       .sort((a, b) => {
-        // Ordenar por severidad primero, luego por tipo
+        // Sort by severity first, then by type
         const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
         const typeOrder = { immediate: 3, preventive: 2, informational: 1 };
         
@@ -352,7 +352,7 @@ export default function RecommendationsPanel({
         }
         return typeOrder[b.type] - typeOrder[a.type];
       })
-      .slice(0, 5); // Máximo 5 recomendaciones para evitar sobrecarga
+      .slice(0, 5); // Maximum 5 recommendations to avoid overload
   };
 
   const recommendations = generateIntelligentRecommendations();
@@ -389,10 +389,10 @@ export default function RecommendationsPanel({
 
   const getSeverityLabel = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'CRÍTICO';
-      case 'high': return 'Alto';
-      case 'medium': return 'Medio';
-      case 'low': return 'Bajo';
+      case 'critical': return 'CRITICAL';
+      case 'high': return 'High';
+      case 'medium': return 'Medium';
+      case 'low': return 'Low';
       default: return 'Info';
     }
   };
@@ -402,19 +402,19 @@ export default function RecommendationsPanel({
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <CheckCircle className="w-5 h-5 text-green-500" />
-          Sistema de Recomendaciones Inteligente
+          Intelligent Recommendations System
         </h2>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
           <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-          <p className="text-green-800 font-medium">Condiciones operativas normales</p>
+          <p className="text-green-800 font-medium">Normal operating conditions</p>
           <p className="text-green-600 text-sm">
-            Continuar con operación estándar. Sistema monitorizando continuamente.
+            Continue with standard operation. System monitoring continuously.
           </p>
           {operationalContext && (
             <div className="mt-3 text-xs text-green-700">
-              {operationalContext.estimatedPassengers} pasajeros estimados • 
-              {operationalContext.isRushHour ? ' Hora punta' : ' Horario normal'} • 
-              Confianza: 95%
+              {operationalContext.estimatedPassengers} estimated passengers • 
+              {operationalContext.isRushHour ? ' Rush hour' : ' Normal hours'} • 
+              Confidence: 95%
             </div>
           )}
         </div>
@@ -427,13 +427,13 @@ export default function RecommendationsPanel({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-orange-500" />
-          Recomendaciones Operativas Inteligentes
+          Intelligent Operational Recommendations
         </h2>
         <div className="text-sm text-gray-500 text-right">
-          <div>{recommendations.length} recomendación{recommendations.length !== 1 ? 'es' : ''} activa{recommendations.length !== 1 ? 's' : ''}</div>
+          <div>{recommendations.length} active recommendation{recommendations.length !== 1 ? 's' : ''}</div>
           {operationalContext && (
             <div className="text-xs mt-1">
-              {operationalContext.estimatedPassengers} pasajeros • {operationalContext.isRushHour ? 'Hora punta' : 'Normal'}
+              {operationalContext.estimatedPassengers} passengers • {operationalContext.isRushHour ? 'Rush hour' : 'Normal'}
             </div>
           )}
         </div>
@@ -455,18 +455,18 @@ export default function RecommendationsPanel({
                       {getSeverityLabel(recommendation.severity)}
                     </span>
                     <span className="text-xs px-2 py-1 rounded-full bg-black/10">
-                      {recommendation.confidence}% confianza
+                      {recommendation.confidence}% confidence
                     </span>
                   </div>
                 </div>
                 
                 <p className="text-sm mb-3 text-gray-700">{recommendation.description}</p>
                 
-                {/* Información de impacto */}
+                {/* Impact information */}
                 <div className="bg-white/60 rounded-lg p-3 mb-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                   <div className="flex items-center gap-1">
                     <Users className="w-3 h-3" />
-                    <span>{recommendation.impact.passengersAffected} afectados</span>
+                    <span>{recommendation.impact.passengersAffected} affected</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
@@ -480,14 +480,14 @@ export default function RecommendationsPanel({
                   )}
                   <div className="flex items-center gap-1">
                     <Info className="w-3 h-3" />
-                    <span>Impacto {recommendation.impact.economicImpact}</span>
+                    <span>{recommendation.impact.economicImpact} Impact</span>
                   </div>
                 </div>
 
-                {/* Acciones automáticas */}
+                {/* Automatic actions */}
                 {recommendation.automaticActions && recommendation.automaticActions.length > 0 && (
                   <div className="mb-3">
-                    <h4 className="font-medium text-sm mb-1 text-green-800">Acciones Automáticas:</h4>
+                    <h4 className="font-medium text-sm mb-1 text-green-800">Automatic Actions:</h4>
                     <ul className="text-xs space-y-1">
                       {recommendation.automaticActions.map((action, index) => (
                         <li key={index} className="flex items-start gap-1 text-green-700">
@@ -499,9 +499,9 @@ export default function RecommendationsPanel({
                   </div>
                 )}
 
-                {/* Acciones manuales */}
+                {/* Manual actions */}
                 <div className="mb-3">
-                  <h4 className="font-medium text-sm mb-1 text-gray-800">Acciones Requeridas:</h4>
+                  <h4 className="font-medium text-sm mb-1 text-gray-800">Required Actions:</h4>
                   <ul className="text-sm space-y-1">
                     {recommendation.actions.map((action, index) => (
                       <li key={index} className="flex items-start gap-2">
@@ -512,11 +512,11 @@ export default function RecommendationsPanel({
                   </ul>
                 </div>
 
-                {/* Plataformas afectadas */}
+                {/* Affected platforms */}
                 {recommendation.platforms && recommendation.platforms.length > 0 && (
                   <div className="flex items-center gap-2 text-sm border-t pt-2">
                     <MapPin className="w-4 h-4 text-gray-500" />
-                    <span className="font-medium">Andenes afectados:</span>
+                    <span className="font-medium">Affected platforms:</span>
                     <span className="text-gray-600">{recommendation.platforms.join(', ')}</span>
                   </div>
                 )}
@@ -526,32 +526,32 @@ export default function RecommendationsPanel({
         ))}
       </div>
 
-      {/* Resumen estadístico */}
+      {/* Statistical summary */}
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div className="bg-red-50 rounded-lg p-3">
             <p className="text-red-800 font-bold text-lg">
               {recommendations.filter(r => r.severity === 'critical').length}
             </p>
-            <p className="text-red-600 text-sm">Críticas</p>
+            <p className="text-red-600 text-sm">Critical</p>
           </div>
           <div className="bg-orange-50 rounded-lg p-3">
             <p className="text-orange-800 font-bold text-lg">
               {recommendations.filter(r => r.severity === 'high').length}
             </p>
-            <p className="text-orange-600 text-sm">Alto Riesgo</p>
+            <p className="text-orange-600 text-sm">High Risk</p>
           </div>
           <div className="bg-yellow-50 rounded-lg p-3">
             <p className="text-yellow-800 font-bold text-lg">
               {recommendations.filter(r => r.type === 'immediate').length}
             </p>
-            <p className="text-yellow-600 text-sm">Inmediatas</p>
+            <p className="text-yellow-600 text-sm">Immediate</p>
           </div>
           <div className="bg-blue-50 rounded-lg p-3">
             <p className="text-blue-800 font-bold text-lg">
               {Math.round(recommendations.reduce((sum, r) => sum + r.confidence, 0) / recommendations.length)}%
             </p>
-            <p className="text-blue-600 text-sm">Confianza Media</p>
+            <p className="text-blue-600 text-sm">Avg. Confidence</p>
           </div>
         </div>
       </div>

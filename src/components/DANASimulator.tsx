@@ -46,12 +46,12 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [acknowledgedSimulation, setAcknowledgedSimulation] = useState(false);
 
-  // Función de validación científica
+  // Scientific validation function
   const validateWeatherData = (data: Partial<WeatherData>): boolean => {
     const validRanges = {
-      temperature: { min: -40, max: 50 }, // Rango realista para España
-      precipitation: { min: 0, max: 100 }, // mm/h máximo observado
-      windSpeed: { min: 0, max: 60 }, // m/s máximo sin ser huracán
+      temperature: { min: -40, max: 50 }, // Realistic range for Spain
+      precipitation: { min: 0, max: 100 }, // Maximum observed mm/h
+      windSpeed: { min: 0, max: 60 }, // Maximum m/s without being hurricane
       humidity: { min: 0, max: 100 },
       pressure: { min: 950, max: 1050 } // hPa
     };
@@ -65,9 +65,9 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
 
   const danaScenarios: DANAScenario[] = [
     {
-      name: "DANA Severa",
-      description: "Precipitación intensa (15-25 mm/h) + vientos fuertes",
-      scientificBasis: "Basado en eventos DANA registrados en Valencia (2019) y Murcia (2016). Precipitaciones entre 15-30 mm/h son típicas de DANAs severas según AEMET.",
+      name: "Severe DANA",
+      description: "Heavy precipitation (15-25 mm/h) + strong winds",
+      scientificBasis: "Based on DANA events recorded in Valencia (2019) and Murcia (2016). Precipitation between 15-30 mm/h is typical of severe DANAs according to AEMET.",
       validationRange: {
         precipitation: { min: 15, max: 30, unit: "mm/h" },
         windSpeed: { min: 20, max: 35, unit: "m/s" },
@@ -90,50 +90,50 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
       timeline: [
         {
           time: "T-60 min",
-          label: "Detección Inicial",
+          label: "Initial Detection",
           riskLevel: 'low',
-          description: "Presión atmosférica descendiendo (-2 hPa/h), primeras señales de inestabilidad",
+          description: "Atmospheric pressure decreasing (-2 hPa/h), first signs of instability",
           precipitation: 0.2,
           windSpeed: 8.5,
           temperature: 19.2,
-          actions: ["Revisar pronóstico extendido", "Preparar equipos preventivos", "Activar monitoreo intensivo"]
+          actions: ["Review extended forecast", "Prepare preventive equipment", "Activate intensive monitoring"]
         },
         {
           time: "T-30 min",
-          label: "Escalada Moderada",
+          label: "Moderate Escalation",
           riskLevel: 'medium',
-          description: "Intensificación de precipitación (tendencia +8mm/h), rotación de vientos",
+          description: "Precipitation intensification (trend +8mm/h), wind rotation",
           precipitation: 5.8,
           windSpeed: 15.3,
           temperature: 18.9,
-          actions: ["Activar vigilancia reforzada", "Alertar personal operativo", "Preparar señalización", "Verificar drenajes"]
+          actions: ["Activate enhanced surveillance", "Alert operational staff", "Prepare signage", "Verify drainage"]
         },
         {
           time: "T-15 min",
-          label: "Condiciones Críticas",
+          label: "Critical Conditions",
           riskLevel: 'high',
-          description: "Riesgo alto - Precipitación >10mm/h, ráfagas >20m/s - Ventana crítica de actuación",
+          description: "High risk - Precipitation >10mm/h, gusts >20m/s - Critical action window",
           precipitation: 12.4,
           windSpeed: 20.1,
           temperature: 18.6,
-          actions: ["Cerrar andenes expuestos", "Evacuar zonas de riesgo", "Activar protocolos", "Comunicar a usuarios"]
+          actions: ["Close exposed platforms", "Evacuate risk zones", "Activate protocols", "Communicate to users"]
         },
         {
           time: "T-0 min",
-          label: "Pico del Evento",
+          label: "Event Peak",
           riskLevel: 'critical',
-          description: "Condiciones extremas - Máximo impacto según modelo DANA típico",
+          description: "Extreme conditions - Maximum impact according to typical DANA model",
           precipitation: 22.3,
           windSpeed: 24.7,
           temperature: 18.4,
-          actions: ["Suspender operaciones", "Protocolo emergencia total", "Comunicación crisis", "Asegurar refugio"]
+          actions: ["Suspend operations", "Full emergency protocol", "Crisis communication", "Ensure shelter"]
         }
       ]
     },
     {
-      name: "Tormenta Invernal Severa",
-      description: "Condiciones críticas de frío extremo + precipitación",
-      scientificBasis: "Inspirado en Filomena 2021 pero con valores validados. Temperaturas de 3-5°C con precipitación intensa crean condiciones peligrosas de engelamiento.",
+      name: "Severe Winter Storm",
+      description: "Extreme cold conditions + precipitation",
+      scientificBasis: "Inspired by Filomena 2021 but with validated values. Temperatures of 3-5°C with heavy precipitation create dangerous icing conditions.",
       validationRange: {
         precipitation: { min: 25, max: 40, unit: "mm/h" },
         windSpeed: { min: 25, max: 40, unit: "m/s" },
@@ -156,50 +156,50 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
       timeline: [
         {
           time: "T-60 min",
-          label: "Alerta Temprana",
+          label: "Early Warning",
           riskLevel: 'low',
-          description: "Temperatura bajando (-1°C/h), presión cayendo rápidamente (-3 hPa/h)",
+          description: "Temperature dropping (-1°C/h), pressure falling rapidly (-3 hPa/h)",
           precipitation: 1.2,
           windSpeed: 12.3,
           temperature: 8.1,
-          actions: ["Monitoreo intensivo", "Pre-posicionar equipos antihielo", "Verificar calefacción"]
+          actions: ["Intensive monitoring", "Pre-position anti-ice equipment", "Verify heating"]
         },
         {
           time: "T-30 min",
-          label: "Deterioro Acelerado",
+          label: "Accelerated Deterioration",
           riskLevel: 'medium',
-          description: "Precipitación mixta (lluvia-nieve), vientos en aumento, riesgo de engelamiento",
+          description: "Mixed precipitation (rain-snow), increasing winds, icing risk",
           precipitation: 8.7,
           windSpeed: 22.5,
           temperature: 5.2,
-          actions: ["Activar calefacción andenes", "Desplegar equipos emergencia", "Aplicar antihielo"]
+          actions: ["Activate platform heating", "Deploy emergency teams", "Apply anti-ice"]
         },
         {
           time: "T-15 min",
-          label: "Crisis Inminente",
+          label: "Imminent Crisis",
           riskLevel: 'high',
-          description: "Precipitación torrencial, temperatura crítica, formación de hielo inminente",
+          description: "Torrential precipitation, critical temperature, imminent ice formation",
           precipitation: 18.9,
           windSpeed: 28.4,
           temperature: 4.1,
-          actions: ["Cerrar estación parcialmente", "Evacuar andenes exteriores", "Máxima seguridad"]
+          actions: ["Partially close station", "Evacuate outdoor platforms", "Maximum security"]
         },
         {
           time: "T-0 min",
-          label: "Evento Extremo",
+          label: "Extreme Event",
           riskLevel: 'critical',
-          description: "Condiciones de tormenta invernal severa - Peligro máximo por engelamiento",
+          description: "Severe winter storm conditions - Maximum danger from icing",
           precipitation: 32.8,
           windSpeed: 31.2,
           temperature: 3.7,
-          actions: ["Cierre temporal total", "Refugio de emergencia", "Protocolo máxima alerta", "Coordinación 112"]
+          actions: ["Temporary total closure", "Emergency shelter", "Maximum alert protocol", "Coordinate with 112"]
         }
       ]
     },
     {
-      name: "Ola de Calor Extrema",
-      description: "Altas temperaturas + baja humedad + viento cálido",
-      scientificBasis: "Basado en olas de calor de 2003 y 2022. Temperatura >40°C con humedad <35% representa riesgo severo de estrés térmico según protocolos sanitarios.",
+      name: "Extreme Heat Wave",
+      description: "High temperatures + low humidity + hot wind",
+      scientificBasis: "Based on heat waves of 2003 and 2022. Temperature >40°C with humidity <35% represents severe thermal stress risk according to health protocols.",
       validationRange: {
         precipitation: { min: 0, max: 0.1, unit: "mm/h" },
         windSpeed: { min: 10, max: 25, unit: "m/s" },
@@ -222,54 +222,54 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
       timeline: [
         {
           time: "T-60 min",
-          label: "Calor Creciente",
+          label: "Rising Heat",
           riskLevel: 'low',
-          description: "Temperatura subiendo (+2°C/h), humedad bajando, presión alta estable",
+          description: "Temperature rising (+2°C/h), humidity dropping, stable high pressure",
           precipitation: 0,
           windSpeed: 8.2,
           temperature: 35.6,
-          actions: ["Verificar climatización", "Preparar hidratación extra", "Monitorear grupos vulnerables"]
+          actions: ["Verify air conditioning", "Prepare extra hydration", "Monitor vulnerable groups"]
         },
         {
           time: "T-30 min",
-          label: "Estrés Térmico",
+          label: "Thermal Stress",
           riskLevel: 'medium',
-          description: "Calor intenso (>36°C), humedad crítica (<40%), riesgo para grupos vulnerables",
+          description: "Intense heat (>36°C), critical humidity (<40%), risk for vulnerable groups",
           precipitation: 0,
           windSpeed: 11.7,
           temperature: 38.9,
-          actions: ["Abrir zonas de sombra", "Reforzar personal médico", "Activar fuentes de agua"]
+          actions: ["Open shaded areas", "Reinforce medical staff", "Activate water fountains"]
         },
         {
           time: "T-15 min",
-          label: "Temperatura Peligrosa",
+          label: "Dangerous Temperature",
           riskLevel: 'high',
-          description: "Riesgo de golpe de calor en andenes expuestos (>40°C), índice UV extremo",
+          description: "Heat stroke risk on exposed platforms (>40°C), extreme UV index",
           precipitation: 0,
           windSpeed: 13.1,
           temperature: 40.2,
-          actions: ["Evacuar andenes soleados", "Activar nebulizadores", "Aumentar ventilación"]
+          actions: ["Evacuate sunny platforms", "Activate misters", "Increase ventilation"]
         },
         {
           time: "T-0 min",
-          label: "Calor Extremo",
+          label: "Extreme Heat",
           riskLevel: 'critical',
-          description: "Temperatura peligrosa para la salud - Riesgo vital por hipertermia",
+          description: "Temperature dangerous to health - Life-threatening hyperthermia risk",
           precipitation: 0,
           windSpeed: 14.3,
           temperature: 41.2,
-          actions: ["Refugio obligatorio AC", "Atención médica preventiva", "Comunicación sanitaria", "Protocolo salud"]
+          actions: ["Mandatory AC shelter", "Preventive medical care", "Health communication", "Health protocol"]
         }
       ]
     }
   ];
 
-  // Validar todos los escenarios al cargar
+  // Validate all scenarios on load
   const validateAllScenarios = () => {
     return danaScenarios.every(scenario => {
       const isValid = validateWeatherData(scenario.data);
       if (!isValid) {
-        console.warn(`Escenario ${scenario.name} tiene valores fuera de rango científico`);
+        console.warn(`Scenario ${scenario.name} has values outside scientific range`);
       }
       return isValid;
     });
@@ -277,12 +277,12 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
 
   const simulateDANA = async (scenario: DANAScenario) => {
     if (!acknowledgedSimulation) {
-      alert("Por favor, acknowledge el aviso de simulación antes de continuar.");
+      alert("Please acknowledge the simulation notice before continuing.");
       return;
     }
 
     if (!validateWeatherData(scenario.data)) {
-      console.error(`Escenario ${scenario.name} falló validación científica`);
+      console.error(`Scenario ${scenario.name} failed scientific validation`);
       return;
     }
 
@@ -291,18 +291,18 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
     setIsSimulating(true);
     setSimulationPhase(0);
 
-    // Simular la evolución temporal con timing pausado
+    // Simulate temporal evolution with paused timing
     for (let phase = 0; phase < scenario.timeline.length; phase++) {
       setTimeout(() => {
         setSimulationPhase(phase);
         if (phase === scenario.timeline.length - 1) {
-          // Al final, aplicar los datos del escenario
+          // At the end, apply scenario data
           onSimulate(scenario.data);
         }
-      }, phase * 8000); // 8 segundos por fase
+      }, phase * 8000); // 8 seconds per phase
     }
     
-    // Finalizar simulación
+    // End simulation
     setTimeout(() => {
       setIsSimulating(false);
     }, scenario.timeline.length * 8000 + 2000);
@@ -338,20 +338,20 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      {/* AVISO PROMINENTE DE SIMULACIÓN */}
+      {/* PROMINENT SIMULATION WARNING */}
       {showDisclaimer && (
         <div className="mb-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div className="flex-grow">
               <h3 className="text-lg font-bold text-yellow-800 mb-2">
-                ⚠️ MODO SIMULACIÓN - DATOS NO REALES ⚠️
+                ⚠️ SIMULATION MODE - NOT REAL DATA ⚠️
               </h3>
               <div className="text-sm text-yellow-700 space-y-2">
-                <p><strong>IMPORTANTE:</strong> Este simulador genera datos meteorológicos ficticios con fines educativos y de entrenamiento.</p>
-                <p><strong>NO utilizar para toma de decisiones reales.</strong> Los valores mostrados están validados científicamente pero son sintéticos.</p>
-                <p><strong>Finalidad:</strong> Entrenar personal, probar protocolos y evaluar respuestas ante emergencias.</p>
-                <p><strong>Validación:</strong> Rangos meteorológicos basados en eventos históricos documentados por AEMET e INM.</p>
+                <p><strong>IMPORTANT:</strong> This simulator generates fictional weather data for educational and training purposes.</p>
+                <p><strong>DO NOT use for real decision-making.</strong> The displayed values are scientifically validated but synthetic.</p>
+                <p><strong>Purpose:</strong> Train personnel, test protocols, and evaluate emergency responses.</p>
+                <p><strong>Validation:</strong> Weather ranges based on historical events documented by AEMET and INM.</p>
               </div>
               <div className="flex items-center gap-4 mt-3">
                 <label className="flex items-center gap-2 text-sm font-medium text-yellow-800">
@@ -361,14 +361,14 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
                     onChange={(e) => setAcknowledgedSimulation(e.target.checked)}
                     className="rounded border-yellow-300"
                   />
-                  Entiendo que estos son datos simulados
+                  I understand this is simulated data
                 </label>
                 <button 
                   onClick={() => setShowDisclaimer(false)}
                   className="text-xs bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded"
                   disabled={!acknowledgedSimulation}
                 >
-                  Continuar
+                  Continue
                 </button>
               </div>
             </div>
@@ -380,14 +380,14 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
         <div>
           <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
             <Shield className="w-5 h-5 text-orange-500" />
-            Simulador de Eventos Extremos
+            Extreme Events Simulator
             <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full ml-2">
-              SIMULACIÓN
+              SIMULATION
             </span>
           </h2>
           <p className="text-sm text-gray-600">
-            Simula condiciones DANA y evalúa respuesta del sistema - 
-            <span className="font-medium text-orange-600">Datos validados científicamente</span>
+            Simulate DANA conditions and evaluate system response - 
+            <span className="font-medium text-orange-600">Scientifically validated data</span>
           </p>
         </div>
         <button
@@ -400,52 +400,52 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
         </button>
       </div>
 
-      {/* Validación Científica */}
+      {/* Scientific Validation */}
       <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="flex items-center gap-2 text-sm">
           <Info className="w-4 h-4 text-blue-600" />
           <span className="font-medium text-blue-800">
-            Estado de Validación: 
+            Validation Status: 
           </span>
           <span className={`px-2 py-1 rounded-full text-xs ${
             validateAllScenarios() 
               ? 'bg-green-100 text-green-800' 
               : 'bg-red-100 text-red-800'
           }`}>
-            {validateAllScenarios() ? '✓ Valores Validados' : '⚠️ Valores Fuera de Rango'}
+            {validateAllScenarios() ? '✓ Validated Values' : '⚠️ Values Out of Range'}
           </span>
         </div>
       </div>
 
-      {/* Timeline de Evolución */}
+      {/* Evolution Timeline */}
       {showTimeline && selectedScenario && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-orange-400">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-4 h-4 text-orange-600" />
             <span className="text-xs font-bold text-orange-800 bg-orange-100 px-2 py-1 rounded">
-              SIMULACIÓN EN CURSO
+              SIMULATION IN PROGRESS
             </span>
           </div>
           
           <div className="flex items-center gap-2 mb-4">
             <Clock className="w-5 h-5 text-blue-500" />
             <h3 className="font-semibold text-gray-800">
-              Evolución Temporal: {selectedScenario.name}
+              Temporal Evolution: {selectedScenario.name}
             </h3>
             {isSimulating && (
               <span className="text-sm text-blue-600 animate-pulse">
-                Simulando fase {simulationPhase + 1} de {selectedScenario.timeline.length}...
+                Simulating phase {simulationPhase + 1} of {selectedScenario.timeline.length}...
               </span>
             )}
           </div>
 
-          {/* Base científica */}
+          {/* Scientific basis */}
           <div className="mb-4 p-3 bg-white border border-gray-200 rounded">
             <p className="text-xs text-gray-600">
-              <strong>Base científica:</strong> {selectedScenario.scientificBasis}
+              <strong>Scientific basis:</strong> {selectedScenario.scientificBasis}
             </p>
             <div className="mt-2 text-xs text-gray-500">
-              <strong>Rangos validados:</strong> 
+              <strong>Validated ranges:</strong> 
               🌧️ {selectedScenario.validationRange.precipitation.min}-{selectedScenario.validationRange.precipitation.max} {selectedScenario.validationRange.precipitation.unit} |
               💨 {selectedScenario.validationRange.windSpeed.min}-{selectedScenario.validationRange.windSpeed.max} {selectedScenario.validationRange.windSpeed.unit} |
               🌡️ {selectedScenario.validationRange.temperature.min}-{selectedScenario.validationRange.temperature.max} {selectedScenario.validationRange.temperature.unit}
@@ -486,7 +486,7 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium mb-1">Acciones recomendadas:</p>
+                  <p className="text-xs font-medium mb-1">Recommended actions:</p>
                   <ul className="text-xs space-y-1">
                     {phase.actions.map((action, actionIndex) => (
                       <li key={actionIndex} className="flex items-start gap-1">
@@ -502,7 +502,7 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
         </div>
       )}
 
-      {/* Escenarios disponibles */}
+      {/* Available scenarios */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {danaScenarios.map((scenario, index) => {
           const isValidated = validateWeatherData(scenario.data);
@@ -512,8 +512,8 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
             }`}>
               <div className="flex items-center gap-2 mb-2">
                 {scenario.name.includes('DANA') && <CloudRain className="w-5 h-5 text-blue-500" />}
-                {scenario.name.includes('Tormenta') && <Cloud className="w-5 h-5 text-gray-600" />}
-                {scenario.name.includes('Calor') && <Wind className="w-5 h-5 text-red-500" />}
+                {scenario.name.includes('Storm') && <Cloud className="w-5 h-5 text-gray-600" />}
+                {scenario.name.includes('Heat') && <Wind className="w-5 h-5 text-red-500" />}
                 <h3 className="font-semibold text-gray-800">{scenario.name}</h3>
                 {isValidated ? (
                   <span className="text-xs bg-green-100 text-green-700 px-1 py-0.5 rounded">✓</span>
@@ -525,7 +525,7 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
               <p className="text-sm text-gray-600 mb-2">{scenario.description}</p>
               
               <div className="text-xs text-gray-500 mb-3 p-2 bg-gray-50 rounded">
-                <div><strong>Base científica:</strong> {scenario.scientificBasis.substring(0, 80)}...</div>
+                <div><strong>Scientific basis:</strong> {scenario.scientificBasis.substring(0, 80)}...</div>
               </div>
               
               <div className="text-xs text-gray-500 mb-3">
@@ -546,34 +546,34 @@ export default function DANASimulator({ onSimulate, onReset }: DANASimulatorProp
                 }`}
               >
                 <Play className="w-4 h-4" />
-                {!acknowledgedSimulation ? 'Confirme Aviso' : 
-                 !isValidated ? 'Datos Inválidos' :
-                 isSimulating && selectedScenario?.name === scenario.name ? 'Simulando...' : 'Simular'}
+                {!acknowledgedSimulation ? 'Confirm Notice' : 
+                 !isValidated ? 'Invalid Data' :
+                 isSimulating && selectedScenario?.name === scenario.name ? 'Simulating...' : 'Simulate'}
               </button>
             </div>
           );
         })}
       </div>
 
-      {/* Explicación del valor preventivo */}
+      {/* Explanation of preventive value */}
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
           <Clock className="w-4 h-4" />
-          Valor de la Anticipación
+          Value of Anticipation
         </h4>
         <p className="text-sm text-blue-700">
-          El sistema detecta condiciones peligrosas hasta <strong>60 minutos antes</strong> del evento crítico, 
-          permitiendo tomar decisiones preventivas cuando aún hay tiempo para proteger vidas y minimizar daños.
+          The system detects dangerous conditions up to <strong>60 minutes before</strong> the critical event, 
+          allowing preventive decisions when there is still time to protect lives and minimize damage.
           <span className="block mt-1 text-xs">
-            <strong>Nota:</strong> Los tiempos y valores están calibrados según eventos históricos documentados.
+            <strong>Note:</strong> Times and values are calibrated according to documented historical events.
           </span>
         </p>
       </div>
 
-      {/* Footer de validación */}
+      {/* Validation footer */}
       <div className="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500 text-center">
         <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">
-          🧪 ENTORNO DE SIMULACIÓN - VALIDACIÓN CIENTÍFICA ACTIVA
+          🧪 SIMULATION ENVIRONMENT - SCIENTIFIC VALIDATION ACTIVE
         </span>
       </div>
     </div>

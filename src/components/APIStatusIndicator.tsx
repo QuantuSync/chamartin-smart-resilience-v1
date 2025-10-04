@@ -43,14 +43,14 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
   const [totalRequests, setTotalRequests] = useState(0);
   const [systemUptime, setSystemUptime] = useState(99.7);
 
-  // Función para mapear estado de API a nuestro formato
+  // Function to map API status to our format
   const mapApiStatus = (rawStatus: string, hasError: boolean): 'active' | 'standby' | 'error' => {
     if (hasError) return 'error';
     if (rawStatus === 'success') return 'active';
     return 'standby';
   };
 
-  // Función para calcular tiempo de respuesta simulado basado en estado real
+  // Function to calculate simulated response time based on actual status
   const calculateResponseTime = (apiName: string, status: 'active' | 'standby' | 'error'): number => {
     const baseTime = {
       'AEMET OpenData': 150,
@@ -61,14 +61,14 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
     if (status === 'error') return 0;
     if (status === 'standby') return baseTime * 1.5;
     
-    // Agregar variación realista para APIs activas
+    // Add realistic variation for active APIs
     return baseTime + (Math.random() - 0.5) * 100;
   };
 
-  // Actualizar estados de API basado en metadatos reales
+  // Update API statuses based on actual metadata
   useEffect(() => {
     if (!metadata?.rawSources) {
-      // Fallback cuando no hay metadatos
+      // Fallback when there's no metadata
       setApiStatuses([
         {
           name: 'AEMET OpenData',
@@ -78,7 +78,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
           callsToday: 0,
           endpoint: '/api/weather (AEMET)',
           icon: <Cloud className="w-4 h-4" />,
-          errorMessage: 'Sin datos de estado'
+          errorMessage: 'No status data'
         },
         {
           name: 'NASA POWER',
@@ -88,7 +88,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
           callsToday: 0,
           endpoint: '/api/weather (NASA)',
           icon: <Satellite className="w-4 h-4" />,
-          errorMessage: 'Sin datos de estado'
+          errorMessage: 'No status data'
         },
         {
           name: 'Copernicus ERA5',
@@ -98,7 +98,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
           callsToday: 0,
           endpoint: '/api/weather (ERA5)',
           icon: <Database className="w-4 h-4" />,
-          errorMessage: 'Sin datos de estado'
+          errorMessage: 'No status data'
         }
       ]);
       return;
@@ -107,19 +107,19 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
     const rawSources = metadata.rawSources;
     const now = new Date();
 
-    // Estado AEMET
+    // AEMET status
     const aemetStatus = mapApiStatus(
       rawSources.aemet?.status || 'error',
       !!rawSources.aemet?.error
     );
 
-    // Estado NASA
+    // NASA status
     const nasaStatus = mapApiStatus(
       rawSources.nasa?.status || 'error',
       !!rawSources.nasa?.error
     );
 
-    // Estado Copernicus ERA5
+    // Copernicus ERA5 status
     const copernicusStatus = mapApiStatus(
       rawSources.copernicus?.status || 'error',
       !!rawSources.copernicus?.error
@@ -161,18 +161,18 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
       }
     ]);
 
-    // Actualizar estadísticas del sistema
+    // Update system statistics
     const activeAPIs = [aemetStatus, nasaStatus, copernicusStatus].filter(s => s === 'active').length;
     const totalAPIs = 3;
     
-    // Calcular uptime basado en APIs activas y confianza general
+    // Calculate uptime based on active APIs and general confidence
     const uptimeFromAPIs = (activeAPIs / totalAPIs) * 100;
     const uptimeFromConfidence = confidence;
     const combinedUptime = (uptimeFromAPIs * 0.6) + (uptimeFromConfidence * 0.4);
     
     setSystemUptime(Math.max(85, Math.min(99.9, combinedUptime)));
     
-    // Calcular total de requests basado en APIs activas
+    // Calculate total requests based on active APIs
     setTotalRequests(prev => {
       const baseRequests = activeAPIs * 150;
       return Math.max(baseRequests, prev);
@@ -180,7 +180,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
 
   }, [metadata, confidence]);
 
-  // Actualización periódica de tiempos de respuesta para APIs activas
+  // Periodic update of response times for active APIs
   useEffect(() => {
     const interval = setInterval(() => {
       setApiStatuses(prevStatuses => 
@@ -195,7 +195,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
           return api;
         })
       );
-    }, 5000); // Actualizar cada 5 segundos
+    }, 5000); // Update every 5 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -220,10 +220,10 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'Activa';
+      case 'active': return 'Active';
       case 'standby': return 'Standby';
       case 'error': return 'Error';
-      default: return 'Desconocido';
+      default: return 'Unknown';
     }
   };
 
@@ -244,10 +244,10 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
     const activeCount = apiStatuses.filter(api => api.status === 'active').length;
     const errorCount = apiStatuses.filter(api => api.status === 'error').length;
     
-    if (activeCount === 3) return { color: 'text-green-600', text: 'Óptimo' };
-    if (activeCount >= 2) return { color: 'text-blue-600', text: 'Operativo' };
-    if (activeCount >= 1) return { color: 'text-yellow-600', text: 'Degradado' };
-    return { color: 'text-red-600', text: 'Crítico' };
+    if (activeCount === 3) return { color: 'text-green-600', text: 'Optimal' };
+    if (activeCount >= 2) return { color: 'text-blue-600', text: 'Operational' };
+    if (activeCount >= 1) return { color: 'text-yellow-600', text: 'Degraded' };
+    return { color: 'text-red-600', text: 'Critical' };
   };
 
   const systemStatus = getOverallSystemStatus();
@@ -260,7 +260,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
       >
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-blue-500" />
-          <h3 className="font-semibold text-gray-800">Monitor de APIs</h3>
+          <h3 className="font-semibold text-gray-800">API Monitor</h3>
           <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-gray-100">
             <span className={systemStatus.color}>{systemStatus.text}</span>
           </div>
@@ -314,7 +314,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
                     <span className="font-mono text-xs">{api.endpoint}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Respuesta:</span>
+                    <span>Response:</span>
                     <span className={
                       api.responseTime === 0 ? 'text-gray-400' :
                       api.responseTime < 200 ? 'text-green-600' : 
@@ -324,16 +324,16 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Última llamada:</span>
+                    <span>Last call:</span>
                     <span>{formatLastCall(api.lastCall)} ago</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Llamadas hoy:</span>
+                    <span>Calls today:</span>
                     <span className="font-medium">{api.callsToday}</span>
                   </div>
                   {api.confidence !== undefined && api.confidence > 0 && (
                     <div className="flex justify-between">
-                      <span>Confianza:</span>
+                      <span>Confidence:</span>
                       <span className={api.confidence > 80 ? 'text-green-600' : api.confidence > 60 ? 'text-yellow-600' : 'text-red-600'}>
                         {api.confidence}%
                       </span>
@@ -354,9 +354,9 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
                       api.status === 'standby' ? 'bg-yellow-500' : 'bg-red-500'
                     }`}></div>
                     <span className="text-gray-500">
-                      {api.status === 'active' ? 'Transmitiendo datos' :
-                       api.status === 'standby' ? 'En espera' : 
-                       api.status === 'error' ? 'Error de conexión' : 'Estado desconocido'}
+                      {api.status === 'active' ? 'Transmitting data' :
+                       api.status === 'standby' ? 'On standby' : 
+                       api.status === 'error' ? 'Connection error' : 'Unknown status'}
                     </span>
                   </div>
                 </div>
@@ -364,23 +364,23 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
             ))}
           </div>
 
-          {/* Información adicional del sistema */}
+          {/* Additional system information */}
           <div className="mt-4 pt-4 border-t border-gray-200">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
               <div>
-                <span className="text-gray-500">Estrategia de fusión:</span>
+                <span className="text-gray-500">Fusion strategy:</span>
                 <div className="font-medium text-gray-700">
-                  {metadata?.fusionStrategy?.replace(/_/g, ' ') || 'No disponible'}
+                  {metadata?.fusionStrategy?.replace(/_/g, ' ') || 'Not available'}
                 </div>
               </div>
               <div>
-                <span className="text-gray-500">Fuentes activas:</span>
+                <span className="text-gray-500">Active sources:</span>
                 <div className="font-medium text-gray-700">
-                  {metadata?.sourcesUsed?.join(', ') || 'Ninguna'}
+                  {metadata?.sourcesUsed?.join(', ') || 'None'}
                 </div>
               </div>
               <div>
-                <span className="text-gray-500">Confianza global:</span>
+                <span className="text-gray-500">Global confidence:</span>
                 <div className={`font-medium ${
                   confidence > 80 ? 'text-green-600' : 
                   confidence > 60 ? 'text-yellow-600' : 'text-red-600'
@@ -389,7 +389,7 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
                 </div>
               </div>
               <div>
-                <span className="text-gray-500">Nivel de anomalía:</span>
+                <span className="text-gray-500">Anomaly level:</span>
                 <div className={`font-medium ${
                   metadata?.era5Validation?.anomalyLevel === 'normal' ? 'text-green-600' :
                   metadata?.era5Validation?.anomalyLevel === 'moderate' ? 'text-yellow-600' :
@@ -404,9 +404,9 @@ export default function APIStatusIndicator({ dataSource, confidence, metadata }:
 
           <div className="mt-4 pt-3 border-t border-gray-200">
             <div className="flex items-center justify-between text-xs text-gray-500">
-              <span>🚦 Monitorización en tiempo real - Datos del sistema integrado</span>
+              <span>🚦 Real-time monitoring - Integrated system data</span>
               <span>
-                Fuente actual: <span className="font-medium text-gray-700">{dataSource}</span>
+                Current source: <span className="font-medium text-gray-700">{dataSource}</span>
               </span>
             </div>
           </div>
